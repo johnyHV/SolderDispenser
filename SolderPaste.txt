@@ -1,0 +1,7 @@
+XG-50	Sn63/Pb37 				25-45um 
+XG-Z40	Sn63/Pb37 				25-45um
+BR508 	Sn63/Pb37
+XG-z40	Sn63/Pb37 				25-45um
+XGS40	Sn62.6/Pb37.0/Ag0.40	20-38um
+XP5 	Sn63/Pb37				20-38µm
+RL-402	Sn63/Pb37				20-38um
