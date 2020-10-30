@@ -19,6 +19,7 @@
 extern int  MotorSteps;           ///< aktualna poloha motora
 extern uint16_t MotorSleep;       ///< dlzka sleep-u
 extern uint8_t MotorAutoPull;     ///< Informacia o tlacidlach pre auto pull efekt
+extern uint8_t MotorAutoPullEn;   ///< Aktualny stav zapnutia/vypnutia auto pull efektu cez tlacidlo.
 
 #define MOTOR_PUSH      'F'       ///< priznak pre posun vpred
 #define MOTOR_PULL      'B'       ///< priznak pre posun vzad
@@ -35,5 +36,7 @@ void MotorStepper(uint8_t);       ///< dalsi krok
 void MotorOff();                  ///< vypnutie motora
 void SetDirection(uint8_t);       ///< nastavenie smeru motora
 void MotorAutoPullEffect();       ///< Automaticky pull efekt o X krokov po pusteni PUSH tlacidla
+void MotorAutoPullEnDis(uint8_t); ///< Funkcia pre nastavenie auto pull efektu cez tlacidlo MODE
+uint8_t MotorAutoPullStatus();    ///< Informacia ci je aktualne auto pull zapnuty, alebo vypunuty
 
 #endif

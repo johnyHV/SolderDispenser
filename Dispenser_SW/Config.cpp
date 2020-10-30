@@ -1,34 +1,36 @@
 /**
- * @file Config.cpp
- *
- * @brief kniznica s logikou
- *
- * @author Miroslav Pivovarsky
- * Contact: miroslav.pivovarsky@gmail.com
- * 
- * @bug: no know bug
- *
- */
+   @file Config.cpp
+
+   @brief kniznica s logikou
+
+   @author Miroslav Pivovarsky
+   Contact: miroslav.pivovarsky@gmail.com
+
+   @bug: no know bug
+
+*/
 
 #include "Config.h"
 
 uint8_t Mode_buttonState = LOW;
 uint8_t Mode_lastButtonState = LOW;
 unsigned long Mode_lastDebounceTime = 0;
+unsigned long Mode_lastDebounceTimeAutoPull = 0;
 uint8_t ConfigModeStatus = 1;
+uint8_t AutoPullSafety = false;
 
 /**
- *
- * @info Inicializacia periferii
- * @param none
- * @return none 
- */
+
+   @info Inicializacia periferii
+   @param none
+   @return none
+*/
 void ConfigInit() {
-  pinMode(LED_1,OUTPUT);
-  pinMode(LED_2,OUTPUT);
-  pinMode(LED_3,OUTPUT);
-  pinMode(LED_4,OUTPUT);
-  pinMode(LED_STATUS,OUTPUT);
+  pinMode(LED_1, OUTPUT);
+  pinMode(LED_2, OUTPUT);
+  pinMode(LED_3, OUTPUT);
+  pinMode(LED_4, OUTPUT);
+  pinMode(LED_STATUS, OUTPUT);
 
   pinMode(BUTTON_PUSH, INPUT);
   pinMode(BUTTON_PULL, INPUT);
@@ -44,13 +46,13 @@ void ConfigInit() {
 }
 
 /**
- *
- * @info nastavenie rychlosti spinania pre dany mod
- * @param int - mod
- * @return none 
- */
+
+   @info nastavenie rychlosti spinania pre dany mod
+   @param int - mod
+   @return none
+*/
 void ConfigSetMod(int Mod) {
-  switch(Mod) {
+  switch (Mod) {
     case 1:
       ConfigSetLed(1);
       MotorSetSleep(ConfigEepromRead(E_MOD1));
@@ -74,11 +76,11 @@ void ConfigSetMod(int Mod) {
 }
 
 /**
- *
- * @info zapnutie konkretnej LED-ky pre dany mod
- * @param int - led
- * @return none 
- */
+
+   @info zapnutie konkretnej LED-ky pre dany mod
+   @param int - led
+   @return none
+*/
 void ConfigSetLed(int led) {
   switch (led) {
     case 1:
@@ -115,34 +117,34 @@ void ConfigSetLed(int led) {
 }
 
 /**
- *
- * @info Kontrola stlacenia PUSH tlacidla
- * @param none
- * @return bool - status tlacidla 
- */
+
+   @info Kontrola stlacenia PUSH tlacidla
+   @param none
+   @return bool - status tlacidla
+*/
 bool ConfigCheckButtonPush() {
   return digitalRead(BUTTON_PUSH);
 }
 
 /**
- *
- * @info Kontrola stlacenia PULL tlacidla
- * @param none
- * @return bool - status tlacidla 
- */
+
+   @info Kontrola stlacenia PULL tlacidla
+   @param none
+   @return bool - status tlacidla
+*/
 bool ConfigCheckButtonPull() {
-   return digitalRead(BUTTON_PULL);
+  return digitalRead(BUTTON_PULL);
 }
 
 /**
- *
- * @info Kontrola stlacenia MODE tlacidla
- * @param none
- * @return bool - status tlacidla 
- */
+
+   @info Kontrola stlacenia tlacidla mode, pre zmenu rychlosti alebo zapis do EEPROM
+   @param none
+   @return bool - status tlacidla
+*/
 bool ConfigCheckButtonMod() {
   int Mode_reading = digitalRead(BUTTON_MOD);
-  
+
   if (Mode_reading != Mode_lastButtonState) {
     Mode_lastDebounceTime = millis();
   }
@@ -156,11 +158,11 @@ bool ConfigCheckButtonMod() {
       /* kontrola, ci je stlacene aj PULL tlacidlo, a ci ide o zapis hodnoty do EEPROM pamete pre dany mod */
       if ((ConfigCheckButtonPull() == false) && (Mode_buttonState == HIGH)) {
         digitalWrite(LED_STATUS, HIGH);
-        
+
         int value = ConfigGetTime();
         Serial.print("Analog: ");
-        Serial.println(value); 
-        switch(ConfigModeStatus) {
+        Serial.println(value);
+        switch (ConfigModeStatus) {
           case 1:
             ConfigEepromWrite(E_MOD1, value);
             break;
@@ -181,25 +183,60 @@ bool ConfigCheckButtonMod() {
         digitalWrite(LED_STATUS, LOW);
         return false;
       }
-      
+
       if (Mode_buttonState == HIGH) {
-        return true;  
+        return true;
       }
     }
   }
-  
+
   Mode_lastButtonState = Mode_reading;
   return false;
 }
 
 /**
- *
- * @info Funkcia ktora prepocita analogovu hodnotu na cas rychlosti spinania cievok
- * @param none
- * @return int - cas
- */
+
+   @info Kontrola stlacenia sekvencie pre zapnutie/vypnute auto pull modu
+   @param none
+   @return bool - status tlacidla
+*/
+bool ConfigCheckButtonModAutoPullEffect() {
+  int Mode_reading = digitalRead(BUTTON_MOD);
+
+  if (Mode_reading != Mode_lastButtonState) {
+    Mode_lastDebounceTimeAutoPull = millis();
+    Serial.println("Store debounce time");
+  }
+
+  /* kontrola, ci tlacidlo bolo dostatocne dlho stlacene, a ci je stale stlacene */
+  if (((millis() - Mode_lastDebounceTimeAutoPull) > Mode_debounceDelayAutoPull) && (Mode_reading == LOW) && (AutoPullSafety == false)) {
+    Serial.println("Auto pull efekt, change status!");
+
+    digitalWrite(LED_STATUS, HIGH);
+    delay(1000);
+    digitalWrite(LED_STATUS, LOW);
+    AutoPullSafety = true;
+
+    Mode_lastDebounceTime = millis();
+    Mode_buttonState = !Mode_buttonState;
+
+    return true;
+  } else {
+    AutoPullSafety = false;
+  }
+
+  Mode_lastButtonState = Mode_reading;
+  return false;
+}
+
+/**
+
+   @info Funkcia ktora prepocita analogovu hodnotu na cas rychlosti spinania cievok
+   @param none
+   @return int - cas
+*/
 uint16_t ConfigGetTime() {
-  uint16_t ret = analogRead(SPEED)*10;
+  uint16_t ret = analogRead(SPEED) * 10;
 
   if (ret < MOTOR_MIN)
     ret = MOTOR_MIN;
@@ -208,12 +245,12 @@ uint16_t ConfigGetTime() {
 }
 
 /**
- *
- * @info Funkcia pre zapis hodnoty 16bit do EEPROM pamete
- * @param uint16_t - Adresa pamete
- * @param uint16_t - hodnota
- * @return none
- */
+
+   @info Funkcia pre zapis hodnoty 16bit do EEPROM pamete
+   @param uint16_t - Adresa pamete
+   @param uint16_t - hodnota
+   @return none
+*/
 void ConfigEepromWrite(uint16_t Add, uint16_t val) {
   uint8_t UP = val >> 8;
   uint8_t DOWN = val & 0xFF;
@@ -226,20 +263,20 @@ void ConfigEepromWrite(uint16_t Add, uint16_t val) {
   Serial.print(UP);
   Serial.print("|");
   Serial.println(DOWN);
-  
+
   EEPROM.write(Add, UP);
   EEPROM.write(Add + 1, DOWN);
 }
 
 /**
- *
- * @info Vycitanie 16bit hodnoty z EEPROM pamete
- * @param uint16_t - Adresa pamete
- * @return uint16_t - hodnota na adrese
- */
+
+   @info Vycitanie 16bit hodnoty z EEPROM pamete
+   @param uint16_t - Adresa pamete
+   @return uint16_t - hodnota na adrese
+*/
 uint16_t ConfigEepromRead(uint16_t Add) {
   int retUp = EEPROM.read(Add);
-  int retDown = EEPROM.read(Add+1);
+  int retDown = EEPROM.read(Add + 1);
 
   int ret = (retUp << 8) | retDown;
   Serial.print("EEPROM Read: ");
@@ -250,6 +287,6 @@ uint16_t ConfigEepromRead(uint16_t Add) {
   Serial.print(retUp);
   Serial.print("|");
   Serial.println(retDown);
-  
+
   return ret;
 }

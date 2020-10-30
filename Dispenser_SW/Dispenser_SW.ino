@@ -28,14 +28,22 @@ void setup() {
 }
 
 void loop() {
-  /* kontrola tlacidla pre zmenu modu */
-  if (ConfigCheckButtonMod() == true) {
-    ConfigModeStatus++;
 
-    if (ConfigModeStatus > 5)
-      ConfigModeStatus = 1;
+  /* kontrola zapnutia/vypnutia auto pull efektu */
+  if (ConfigCheckButtonModAutoPullEffect() == true) {
+    MotorAutoPullEnDis(!MotorAutoPullStatus());
 
-    ConfigSetMod(ConfigModeStatus);
+  } else {
+
+    /* kontrola tlacidla pre zmenu modu */
+    if (ConfigCheckButtonMod() == true) {
+      ConfigModeStatus++;
+
+      if (ConfigModeStatus > 5)
+        ConfigModeStatus = 1;
+
+      ConfigSetMod(ConfigModeStatus);
+    }
   }
 
   /* kontrola tlacidiel pre ovladanie motora */

@@ -14,7 +14,8 @@
 
 int MotorSteps = 0;
 uint16_t MotorSleep = 0;
-extern uint8_t MotorAutoPull = MOTOR_STOP;
+uint8_t MotorAutoPull = MOTOR_STOP;
+uint8_t MotorAutoPullEn = M_A_PULL_E;
 
 /**
 
@@ -160,7 +161,7 @@ void SetDirection(uint8_t Direction) {
 */
 void MotorAutoPullEffect() {
   
-  if (M_A_PULL_E == true) {
+  if (MotorAutoPullEn == true) {
     Serial.println("Enable");
     uint16_t LastSpeed = MotorGetSleep();
 
@@ -178,4 +179,20 @@ void MotorAutoPullEffect() {
   
   
   MotorAutoPull = MOTOR_STOP;
+}
+
+/**
+
+   @info Nastavenie auto pull efektu cez mode button
+   @param status modu
+   @return none
+*/
+void MotorAutoPullEnDis(uint8_t input) {
+  Serial.print("Pull status: ");
+  Serial.println(input);
+  MotorAutoPullEn = input;
+}
+
+uint8_t MotorAutoPullStatus() {
+  return MotorAutoPullEn;
 }

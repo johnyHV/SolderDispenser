@@ -13,7 +13,7 @@
 #ifndef __MCU_h_
 #define __MCU_h_
 
-#define SOFTWARE_VERSION "1.1"
+#define SOFTWARE_VERSION "1.2"
 
 #define MOTOR_M1    3         ///< Motor pin 1
 #define MOTOR_M2    2         ///< Motor pin 2
