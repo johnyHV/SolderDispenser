@@ -1,26 +1,27 @@
 /**
- * @file StepperMotor.cpp
- *
- * @brief Ovladanie krokoveho motora
- *
- * @author Miroslav Pivovarsky
- * Contact: miroslav.pivovarsky@gmail.com
- * 
- * @bug: no know bug
- *
- */
+   @file StepperMotor.cpp
+
+   @brief Ovladanie krokoveho motora
+
+   @author Miroslav Pivovarsky
+   Contact: miroslav.pivovarsky@gmail.com
+
+   @bug: no know bug
+
+*/
 
 #include "StepperMotor.h"
 
 int MotorSteps = 0;
 uint16_t MotorSleep = 0;
+extern uint8_t MotorAutoPull = MOTOR_STOP;
 
 /**
- *
- * @info Inicializacia motora
- * @param none
- * @return none 
- */
+
+   @info Inicializacia motora
+   @param none
+   @return none
+*/
 void MotorInit() {
   pinMode(MOTOR_M1, OUTPUT);
   pinMode(MOTOR_M2, OUTPUT);
@@ -29,21 +30,31 @@ void MotorInit() {
 }
 
 /**
- *
- * @info Nastavenie rychlosti spinania cievok
- * @param uint16_t - rychlost v uS
- * @return none 
- */
+
+   @info Nastavenie rychlosti spinania cievok
+   @param uint16_t - rychlost v uS
+   @return none
+*/
 void MotorSetSleep(uint16_t val) {
   MotorSleep = val;
 }
 
 /**
- *
- * @info Funkcia pre spinanie cievok krokoveho motora
- * @param uint8_t - smer motora
- * @return none 
- */
+
+   @info Ziskam aktualnu medzeru medzi krokmi v uS
+   @param none
+   @return uint16_t - rychlost v uS
+*/
+uint16_t MotorGetSleep() {
+  return MotorSleep;
+}
+
+/**
+
+   @info Funkcia pre spinanie cievok krokoveho motora
+   @param uint8_t - smer motora
+   @return none
+*/
 void MotorStepper(uint8_t Direction) {
   switch (MotorSteps) {
     case 0:
@@ -106,11 +117,11 @@ void MotorStepper(uint8_t Direction) {
 }
 
 /**
- *
- * @info Vypnutie krokoveho motora
- * @param none
- * @return none 
- */
+
+   @info Vypnutie krokoveho motora
+   @param none
+   @return none
+*/
 void MotorOff() {
   digitalWrite(MOTOR_M1, LOW);
   digitalWrite(MOTOR_M2, LOW);
@@ -119,11 +130,11 @@ void MotorOff() {
 }
 
 /**
- *
- * @info Nastavenie smeru otacania motora
- * @param int - smer
- * @return none 
- */
+
+   @info Nastavenie smeru otacania motora
+   @param int - smer
+   @return none
+*/
 void SetDirection(uint8_t Direction) {
 
   if (Direction == MOTOR_PUSH) {
@@ -132,11 +143,39 @@ void SetDirection(uint8_t Direction) {
   if (Direction == MOTOR_PULL) {
     MotorSteps++;
   }
-  
+
   if (MotorSteps > 7) {
     MotorSteps = 0;
   }
   if (MotorSteps < 0) {
     MotorSteps = 7;
   }
+}
+
+/**
+
+   @info efekt automaticke povytiahnutia piestu, aby sa netlacila stale pasta
+   @param none
+   @return none
+*/
+void MotorAutoPullEffect() {
+  
+  if (M_A_PULL_E == true) {
+    Serial.println("Enable");
+    uint16_t LastSpeed = MotorGetSleep();
+
+    MotorSetSleep(M_A_PULL_SP);
+    for (uint8_t i = 0; i <= M_A_PULL_ST; i++) {
+      Serial.println(i);
+      MotorStepper(MOTOR_PULL);
+    }
+
+    MotorOff();
+    MotorSetSleep(LastSpeed);
+  } else {
+    Serial.println("Disable");
+  }
+  
+  
+  MotorAutoPull = MOTOR_STOP;
 }

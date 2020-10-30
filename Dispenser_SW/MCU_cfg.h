@@ -13,7 +13,7 @@
 #ifndef __MCU_h_
 #define __MCU_h_
 
-#define SOFTWARE_VERSION 1.0
+#define SOFTWARE_VERSION "1.1"
 
 #define MOTOR_M1    3         ///< Motor pin 1
 #define MOTOR_M2    2         ///< Motor pin 2
@@ -36,5 +36,9 @@
 #define E_MOD2      3         ///< EEPROM adresa pre MOD 2
 #define E_MOD3      5         ///< EEPROM adresa pre MOD 3
 #define E_MOD4      7         ///< EEPROM adresa pre MOD 4
+
+#define M_A_PULL_E  false      ///< Zapnutie/vypnute auto pull efektu. true - zapnuty,  false - vypnuty
+#define M_A_PULL_ST 100       ///< Pocet krokov, ktore spravi motor pri auto pull efekte
+#define M_A_PULL_SP 4000      ///< Rychlost motora, akou sa bude otacat pri auto pull efekte
 
 #endif
