@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.6.1">
+<eagle version="9.6.2">
 <drawing>
 <settings>
 <setting alwaysvectorfont="yes"/>
@@ -12874,8 +12874,8 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="P+3" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+5V" device=""/>
 <part name="P+4" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="+5V" device=""/>
 <part name="GND4" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="Q1" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="CRYSTAL" device="HC49UP" package3d_urn="urn:adsk.eagle:package:6240908/1"/>
-<part name="Q2" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="CRYSTAL" device="HC49UP" package3d_urn="urn:adsk.eagle:package:6240908/1"/>
+<part name="Q1" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="CRYSTAL" device="HC49UP" package3d_urn="urn:adsk.eagle:package:6240908/1" value="12Mhz"/>
+<part name="Q2" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="CRYSTAL" device="HC49UP" package3d_urn="urn:adsk.eagle:package:6240908/1" value="16Mhz"/>
 <part name="R4" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:23553/2" value="1k"/>
 <part name="R5" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:23553/2" value="1k"/>
 <part name="C1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="C0805" package3d_urn="urn:adsk.eagle:package:23617/2" value="100n"/>
